@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./Timer.css";
 
 const colorChange = (color) => {
@@ -12,29 +12,38 @@ const colorChange = (color) => {
     });
 };
 
+const timerFunc = (timer) => {
+  let x = timer.split(":");
+  if (x[1] === "00") {
+    x[0] = `${(x[0] -= 1)}`;
+    x[1] = "59";
+    if (x[0] < 10) x[0] = "0" + x[0];
+  } else {
+    x[1] = `${(x[1] -= 1)}`;
+    if (x[1] < 10) x[1] = "0" + x[1];
+  }
+
+  return `${x[0]}:${x[1]}`;
+};
+
 function Timer() {
   const [timer, setTimer] = useState("10:00");
+  const [isCounting, setIsCounting] = useState(false);
 
-  const clock = () => {
-    let x = timer.split(":"); 
-    let intervalId = setInterval(function () {
-      if (x[0] === "00" && x[1] === "01") {
-        clearInterval(intervalId);
-      }
-      
-      if (x[1] === "00") {
-        x[0] = `${(x[0] -= 1)}`;
-        x[1] = "59";
-        if (x[0] < 10) x[0] = "0" + x[0];
-      } else {
-        x[1] = `${(x[1] -= 1)}`;
-        if (x[1] < 10) x[1] = "0" + x[1];
-      }
-
-      setTimer(`${x[0]}:${x[1]}`);
-      console.log(x[0], x[1]);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      isCounting && setTimer(timerFunc(timer));
     }, 1000);
+    return () => clearInterval(interval);
+  }, [isCounting, timer]);
+
+  const startHandler = () => {
+    setIsCounting(true);
   };
+
+  const pauseHandler = () => {
+    setIsCounting(false);
+  }
 
   const selectMode = (e) => {
     document.querySelector("#selected").id = "";
@@ -65,9 +74,15 @@ function Timer() {
         </button>
       </div>
       <p className="time-counter">{timer}</p>
-      <button className="start-pause-btn" onClick={clock}>
-        Start
-      </button>
+      {!isCounting ? (
+        <button className="start-pause-btn" onClick={startHandler}>
+          Start
+        </button>
+      ) : (
+        <button className="start-pause-btn" onClick={pauseHandler}>
+          Pause
+        </button>
+      )}
     </div>
   );
 }
