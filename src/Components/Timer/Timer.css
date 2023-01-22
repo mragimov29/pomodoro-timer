@@ -1,0 +1,41 @@
+.Timer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgb(186, 73, 73);
+    width: 400px;
+    height: 300px;
+    border-radius: 30px;
+    margin-left: 700px;
+    margin-top: 150px;
+    padding: 20px;
+}
+
+.time-counter {
+    font-size: 72px;
+    font-weight: 700;
+    height: 75px;
+    color: whitesmoke;
+    margin-top: 50px;
+}
+
+.start-pause-btn {
+    font-size: 34px;
+    padding: 10px 50px;
+    width: 200px;
+    color: rgb(219, 100, 100);
+    background-color: white;
+    border: none;
+}
+
+.timer-chooser button {
+    background-color: rgb(186, 73, 73);
+    border: none;
+    font-size: 20px;
+    color: seashell;
+    cursor: pointer;
+}
+
+#selected {
+    opacity: 0.5;
+}
