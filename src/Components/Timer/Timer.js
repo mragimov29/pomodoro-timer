@@ -28,13 +28,42 @@ const timerFunc = (timer) => {
 
 function Timer() {
   const [timer, setTimer] = useState("10:00");
+  const [pomodoroTimer, setPomodoroTimer] = useState("00:04");
+  const [shortBreak, setShortBreak] = useState("00:02");
+  const [longBreak, setLongBreak] = useState("00:03");
+  const [counter, setCounter] = useState(0);
+  const [pauseCounter, setPauseCounter] = useState(0);
   const [isCounting, setIsCounting] = useState(false);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      isCounting && setTimer(timerFunc(timer));
-    }, 1000);
-    return () => clearInterval(interval);
+    if(timer === "00:00") {
+      if(document.querySelector("#selected").className === "pomodoro" && pauseCounter < 2) {
+        document.querySelector("#selected").id = "";
+        setCounter(counter + 1);
+        setPauseCounter(pauseCounter + 1);
+        document.querySelector(".short").id = "selected";
+        setTimer(shortBreak);
+        colorChange("#16453e");
+      } else if(document.querySelector("#selected").className === "pomodoro" && pauseCounter >= 2) {
+        document.querySelector("#selected").id = "";
+        setCounter(counter + 1);
+        setPauseCounter(0);
+        document.querySelector(".long").id = "selected";
+        setTimer(longBreak);
+        colorChange("#043b5c");
+      } else if(document.querySelector("#selected").className === "short" || document.querySelector("#selected").className === "long") {
+        document.querySelector("#selected").id = "";
+        document.querySelector(".pomodoro").id = "selected";
+        setTimer(pomodoroTimer);
+        colorChange("#af4154");
+      }
+    } else {
+      const interval = setInterval(() => {
+        isCounting && setTimer(timerFunc(timer));
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+
   }, [isCounting, timer]);
 
   const startHandler = () => {
@@ -49,13 +78,13 @@ function Timer() {
     document.querySelector("#selected").id = "";
     e.target.id = "selected";
     if (e.target.className === "short") {
-      setTimer("05:00");
+      setTimer(shortBreak);
       colorChange("#16453e");
     } else if (e.target.className === "long") {
-      setTimer("15:00");
+      setTimer(longBreak);
       colorChange("#043b5c");
     } else if (e.target.className === "pomodoro") {
-      setTimer("25:00");
+      setTimer(pomodoroTimer);
       colorChange("#af4154");
     }
   };
