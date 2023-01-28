@@ -24,14 +24,13 @@
     width: 200px;
     color: #af4154;
     background-color: white;
-    /* border: none;
+    border: none;
     border-radius: 10px;
 }
 
 .timer-chooser {
     display: flex;
     align-items: center;
-} */
 }
 
 .timer-chooser button {
@@ -53,6 +52,7 @@ h1 {
 
 .setting-img {
     width: 30px;
+    margin-top: 5px;
 }
 
 .settings {
@@ -63,9 +63,29 @@ h1 {
 label {
     display: flex;
     justify-content: space-around;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
+    font-size: 17px;
 }
 
 input {
     width: 30px;
+    font-size: 17px;
+}
+
+.ok-button:disabled {
+    opacity: 0.5;
+}
+
+.modal-btns {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+}
+.modal-btns button{
+    font-size: 20px;
+    background-color: #1C1D21;
+    color: whitesmoke;
+    border: none;
+    border-radius: 5px;
+    padding: 4px 10px;
 }

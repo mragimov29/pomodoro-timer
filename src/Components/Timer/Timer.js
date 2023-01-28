@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import ModalSettings from "../ModalSettings/ModalSettings";
+import Modal from "../Modal/Modal";
 import "./Timer.css";
 
 const colorChange = (color) => {
@@ -28,33 +28,50 @@ const timerFunc = (timer) => {
 };
 
 function Timer() {
-  const [pomodoroTimer, setPomodoroTimer] = useState("00:06");
-  const [timer, setTimer] = useState("10:00");
-  const [shortBreak, setShortBreak] = useState("00:04");
-  const [longBreak, setLongBreak] = useState("00:05");
+  const [pomodoroTimer, setPomodoroTimer] = useState("20:00");
+  const [timer, setTimer] = useState(pomodoroTimer);
+  const [shortBreak, setShortBreak] = useState("10:00");
+  const [longBreak, setLongBreak] = useState("30:00");
+  const [pomodoroTimerInput, setPomodoroTimerInput] = useState(
+    pomodoroTimer.slice(0, -3)
+  );
+  const [shortBreakInput, setShortBreakInput] = useState(
+    shortBreak.slice(0, -3)
+  );
+  const [longBreakInput, setLongBreakInput] = useState(longBreak.slice(0, -3));
   const [counter, setCounter] = useState(0);
   const [pauseCounter, setPauseCounter] = useState(0);
   const [intervalPause, setIntervalPause] = useState(2);
+  const [intervalPauseInput, setIntervalPauseInput] = useState(intervalPause);
   const [isCounting, setIsCounting] = useState(false);
   const [modalActive, setModalActive] = useState(false);
 
   useEffect(() => {
-      if(timer === "00:00") {
-      if(document.querySelector("#selected").className === "pomodoro" && pauseCounter < 2) {
+    if (timer === "00:00") {
+      if (
+        document.querySelector("#selected").className === "pomodoro" &&
+        pauseCounter < 2
+      ) {
         document.querySelector("#selected").id = "";
         setCounter(counter + 1);
         setPauseCounter(pauseCounter + 1);
         document.querySelector(".short").id = "selected";
         setTimer(shortBreak);
         colorChange("#16453e");
-      } else if(document.querySelector("#selected").className === "pomodoro" && pauseCounter >= 2) {
+      } else if (
+        document.querySelector("#selected").className === "pomodoro" &&
+        pauseCounter >= 2
+      ) {
         document.querySelector("#selected").id = "";
         setCounter(counter + 1);
         setPauseCounter(0);
         document.querySelector(".long").id = "selected";
         setTimer(longBreak);
         colorChange("#043b5c");
-      } else if(document.querySelector("#selected").className === "short" || document.querySelector("#selected").className === "long") {
+      } else if (
+        document.querySelector("#selected").className === "short" ||
+        document.querySelector("#selected").className === "long"
+      ) {
         document.querySelector("#selected").id = "";
         document.querySelector(".pomodoro").id = "selected";
         setTimer(pomodoroTimer);
@@ -66,7 +83,7 @@ function Timer() {
       }, 1000);
       return () => clearInterval(interval);
     }
-  }, [isCounting, timer]);
+  }, [isCounting, timer, shortBreak, longBreak, pomodoroTimer]);
 
   const startHandler = () => {
     setIsCounting(true);
@@ -88,6 +105,51 @@ function Timer() {
     } else if (e.target.className === "pomodoro") {
       setTimer(pomodoroTimer);
       colorChange("#af4154");
+    }
+  };
+
+  const shortBreakChange = (e) => {
+    setShortBreakInput(e.target.value.replace(/[^0-9]/g, ""));
+  };
+  const pomodoroTimerChange = (e) => {
+    setPomodoroTimerInput(e.target.value.replace(/[^0-9]/g, ""));
+  };
+  const longBreakChange = (e) => {
+    setLongBreakInput(e.target.value.replace(/[^0-9]/g, ""));
+  };
+  const intervalChange = (e) => {
+    setIntervalPauseInput(e.target.value.replace(/[^0-9]/g, ""))
+  }
+
+  const cancelHandler = () => {
+    setModalActive(false);
+    setLongBreakInput(longBreak.slice(0, -3));
+    setShortBreakInput(shortBreak.slice(0, -3));
+    setPomodoroTimerInput(pomodoroTimer.slice(0, -3));
+    setIntervalPauseInput(intervalPause);
+  };
+
+  const okHandler = () => {
+    setModalActive(false);
+    setIntervalPause(intervalPauseInput);
+    if (longBreakInput < 10) setLongBreak("0" + longBreakInput + ":00");
+    else setLongBreak(longBreakInput + ":00");
+    if (shortBreakInput < 10) setShortBreak("0" + shortBreakInput + ":00");
+    else setShortBreak(shortBreakInput + ":00");
+    if (pomodoroTimerInput < 10)
+      setPomodoroTimer("0" + pomodoroTimerInput + ":00");
+    else setPomodoroTimer(pomodoroTimerInput + ":00");
+    if (!isCounting) {
+      if (document.querySelector("#selected").className === "pomodoro") {
+        if (pomodoroTimerInput < 10) setTimer("0" + pomodoroTimerInput + ":00");
+        else setTimer(pomodoroTimerInput + ":00");
+      } else if (document.querySelector("#selected").className === "long") {
+        if (longBreakInput < 10) setTimer("0" + longBreakInput + ":00");
+        else setTimer(longBreakInput + ":00");
+      } else if (document.querySelector("#selected").className === "short") {
+        if (shortBreakInput < 10) setTimer("0" + shortBreakInput + ":00");
+        else setTimer(shortBreakInput + ":00");
+      }
     }
   };
 
@@ -122,18 +184,47 @@ function Timer() {
         </button>
       )}
       <h1>#{counter}</h1>
-      <ModalSettings active={modalActive} setActive={setModalActive}>
+      <Modal active={modalActive} setActive={setModalActive}>
         <div className="settings">
-          <label>Pomodoro:</label>
-          <input value={pomodoroTimer.slice(0, 2)}></input>
-          <label>Short break:</label>
-          <input value={shortBreak.slice(0, 2)}></input>
-          <label>Long break:</label>
-          <input value={longBreak.slice(0, 2)}></input>
-          <label>Long break interval:</label>
-          <input value={intervalPause}></input>
+          <h2>Settings</h2>
+          <label>
+            Pomodoro:
+            <input
+              value={pomodoroTimerInput}
+              onChange={pomodoroTimerChange}
+            ></input>
+          </label>
+          <label>
+            Short break:
+            <input value={shortBreakInput} onChange={shortBreakChange}></input>
+          </label>
+          <label>
+            Long break:
+            <input value={longBreakInput} onChange={longBreakChange}></input>
+          </label>
+          <label>
+            Long break interval:
+            <input value={intervalPauseInput} onChange={intervalChange}></input>
+          </label>
+          <div className="modal-btns">
+            <button
+              className="ok-button"
+              disabled={
+                Number(longBreakInput) === 0 ||
+                Number(shortBreakInput) === 0 ||
+                Number(pomodoroTimerInput) === 0 ||
+                Number(intervalPauseInput) === 0
+                  ? true
+                  : false
+              }
+              onClick={okHandler}
+            >
+              OK
+            </button>
+            <button onClick={cancelHandler}>Cancel</button>
+          </div>
         </div>
-      </ModalSettings>
+      </Modal>
     </div>
   );
 }

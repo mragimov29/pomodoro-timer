@@ -1,9 +1,9 @@
-import "./ModalSettings.css";
+import "./Modal.css";
 
-function ModalSettings({ active, setActive, children }) {
+function Modal({ active, setActive, children }) {
   return (
     <div
-      className={active ? "ModalSettings active" : "ModalSettings"}
+      className={active ? "Modal active" : "Modal "}
       onClick={() => setActive(false)}
     >
       <div
@@ -16,4 +16,4 @@ function ModalSettings({ active, setActive, children }) {
   );
 }
 
-export default ModalSettings;
+export default Modal;
