@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import ModalSettings from "../ModalSettings/ModalSettings";
 import "./Timer.css";
 
 const colorChange = (color) => {
@@ -27,16 +28,18 @@ const timerFunc = (timer) => {
 };
 
 function Timer() {
+  const [pomodoroTimer, setPomodoroTimer] = useState("00:06");
   const [timer, setTimer] = useState("10:00");
-  const [pomodoroTimer, setPomodoroTimer] = useState("00:04");
-  const [shortBreak, setShortBreak] = useState("00:02");
-  const [longBreak, setLongBreak] = useState("00:03");
+  const [shortBreak, setShortBreak] = useState("00:04");
+  const [longBreak, setLongBreak] = useState("00:05");
   const [counter, setCounter] = useState(0);
   const [pauseCounter, setPauseCounter] = useState(0);
+  const [intervalPause, setIntervalPause] = useState(2);
   const [isCounting, setIsCounting] = useState(false);
+  const [modalActive, setModalActive] = useState(false);
 
   useEffect(() => {
-    if(timer === "00:00") {
+      if(timer === "00:00") {
       if(document.querySelector("#selected").className === "pomodoro" && pauseCounter < 2) {
         document.querySelector("#selected").id = "";
         setCounter(counter + 1);
@@ -63,7 +66,6 @@ function Timer() {
       }, 1000);
       return () => clearInterval(interval);
     }
-
   }, [isCounting, timer]);
 
   const startHandler = () => {
@@ -72,7 +74,7 @@ function Timer() {
 
   const pauseHandler = () => {
     setIsCounting(false);
-  }
+  };
 
   const selectMode = (e) => {
     document.querySelector("#selected").id = "";
@@ -101,6 +103,13 @@ function Timer() {
         <button className="long" onClick={selectMode}>
           Long break
         </button>
+        <button onClick={() => setModalActive(true)}>
+          <img
+            className="setting-img"
+            alt="setting"
+            src="https://upload.wikimedia.org/wikipedia/commons/5/58/Ic_settings_48px.svg"
+          ></img>
+        </button>
       </div>
       <p className="time-counter">{timer}</p>
       {!isCounting ? (
@@ -112,6 +121,19 @@ function Timer() {
           Pause
         </button>
       )}
+      <h1>#{counter}</h1>
+      <ModalSettings active={modalActive} setActive={setModalActive}>
+        <div className="settings">
+          <label>Pomodoro:</label>
+          <input value={pomodoroTimer.slice(0, 2)}></input>
+          <label>Short break:</label>
+          <input value={shortBreak.slice(0, 2)}></input>
+          <label>Long break:</label>
+          <input value={longBreak.slice(0, 2)}></input>
+          <label>Long break interval:</label>
+          <input value={intervalPause}></input>
+        </div>
+      </ModalSettings>
     </div>
   );
 }
